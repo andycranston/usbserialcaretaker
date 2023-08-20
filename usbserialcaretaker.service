@@ -1,5 +1,5 @@
 [Unit]
-Description=USB serial device caretaker daemon
+Description=USB serial device caretaker daemon.
 Documentation=https://github.com/andycranston/usbserialcaretaker
 
 [Service]
