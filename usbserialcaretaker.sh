@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# @(!--#) @(#) usbserialcaretaker.sh, sversion 0.1.0, fversion 001, 20-august-2023
+#
+
 
 set -u
 
