@@ -76,7 +76,7 @@ Verify that a login prompt to the Raspberry Pi is displayed and that you can log
 # How it works
 
 The `usbserialcaretaker` script runs in a continous loop. On each run of the loop
-is looks for device file names:
+it looks for device file names:
 
 ```
 /dev/ttyUSB0
@@ -113,7 +113,7 @@ So when a USB serial dongle is inserted a device file such as `ttyUSB0` is creat
 
 If more than ten `ttyUSBX` files get created the `usbserialcaretaker` script will get confused.
 
-After a reboot any USN serial dongles may have to temporarily disconnected for ten seconds or so and then reconnected
+After a reboot any USB serial dongles may have to be temporarily disconnected for ten seconds or so and then reconnected
 to get a login prompt displayed.
 
 Sometimes the file:
