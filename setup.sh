@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# @(!--#) @(#) setup.sh, sversion 0.1.0, fversion 002, 22-august-2023
+# @(!--#) @(#) setup.sh, sversion 0.1.0, fversion 003, 22-august-2023
 #
 # set up the usbserialcaretaker script and service
 #
@@ -17,6 +17,8 @@ PATH=/bin:/usr/bin:/sbin:/usr/sbin
 export PATH
 
 progname=`basename $0`
+
+echo "Script $progname started"
 
 user=`id | cut -d'(' -f2 | cut -d')' -f1`
 
@@ -61,20 +63,28 @@ then
   exit 1
 fi
 
+echo "Stopping USB serial caretaker service (errors can be ignored)"
 sudo systemctl stop usbserialcaretaker.service
 
+echo "Installing USB serial caretaker script in /usr/local/bin"
 cp usbserialcaretaker.sh /usr/local/bin/usbserialcaretaker
 chown root:root          /usr/local/bin/usbserialcaretaker
 chmod u=rwx,go=r         /usr/local/bin/usbserialcaretaker
 
+echo "Installing USB serial caretaker service in /etc/systemd/system"
 cp usbserialcaretaker.service /etc/systemd/system/usbserialcaretaker.service
 chown root:root               /etc/systemd/system/usbserialcaretaker.service
 chmod u=rx,go=r               /etc/systemd/system/usbserialcaretaker.service
 
+echo "Reloading systemd daemon definitions"
 systemctl daemon-reload
 
+echo "Enabling USB serial caretaker service"
 systemctl enable usbserialcaretaker.service
 
+echo "(Re-)starting USB serial caretaker service"
 systemctl start usbserialcaretaker.service
+
+echo "Script $progname completed"
 
 exit 0
