@@ -1,82 +1,67 @@
 # usbserialcaretaker
 
-A daemon bash script to start and stop getty processes for USB serial dongles on a Raspberry Pi.
+A bash script to start and stop getty processes for USB serial dongles on a Raspberry Pi.
+Runs in the background via a systemd service.
 
 # Quick start
 
-Take a a backup of the file `/usr/lib/systemd/system/serial-getty@.service`:
+Run the following command:
 
 ```
-sudo cp -p /usr/lib/systemd/system/serial-getty@.service /usr/lib/systemd/system/serial-getty@.service.install
+sudo ./setup.sh
 ```
 
-Edit the file `/usr/lib/systemd/system/serial-getty@.service` and locate the line which reads:
+Plug a USB serial dongle into a free USB port on the Raspberry Pi.
+
+Attach a serial terminal emulator to the DB9 connector of the dongle.
+
+Configure to run at 115200 baud, 8 bits with no parity.
+
+A login prompt should be displayed.
+
+# Why is this useful?
+
+If a Raspberry Pi is being run "headless" with only connectons being
+power and networking then if the network connection fails then it will
+no longer be possible to login.
+
+By being able to attach a USB serial dongle and get a login prompt
+an operator will be able to diagnose the network connectivity issue.
+Once the network connection is restored just unplug the USB serial dongle.
+
+# Detail of what the `setup.sh` script does
+
+This `setup.sh` script does the following:
+
+The file `/usr/lib/systemd/system/serial-getty@.service` is modified. Specifically the line:
 
 ```
 ExecStart=-/sbin/agetty -o '-p -- \\u' --keep-baud 115200,57600,38400,9600 %I $TERM
 ```
 
-Change this line to read:
+is changed to:
 
 ```
 ExecStart=-/sbin/agetty 115200 %I $TERM
 ```
 
-Save the change to the file `/usr/lib/systemd/system/serial-getty@.service`.
+If the usbserialcaretaker service has been installed prevoius then the service is stopped.
 
-Run the command:
+The bash script `usbserialcaretaker.sh` is copied to `/usr/local/bin`.
 
-```
-sudo make rootinstall
-```
+The service file `usbserialcaretaker.service` is copied to `/etc/systemd/system`.
 
-Output should be similar to:
+The systemd daemon serive files are reloaded.
 
-```
-sudo cp usbserialcaretaker.sh /usr/local/bin/usbserialcaretaker
-sudo chown root:root          /usr/local/bin/usbserialcaretaker
-sudo chmod u=rwx,go=r         /usr/local/bin/usbserialcaretaker
-sudo cp usbserialcaretaker.service /etc/systemd/system/usbserialcaretaker.service
-sudo chown root:root               /etc/systemd/system/usbserialcaretaker.service
-sudo chmod u=rx,go=r               /etc/systemd/system/usbserialcaretaker.service
-sudo systemctl daemon-reload
-sudo systemctl enable usbserialcaretaker.service
-sudo systemctl start usbserialcaretaker.service
-```
+The usbserialcaretaker service is enabled.
 
-Check the daemon is running:
+The usbserialcaretaker service is started.
 
-```
-sudo systemctl status usbserialcaretaker.service
-```
+# How the `usbserialcaretaker` bash script works
 
-Output should be similar to:
+The `usbserialcaretaker` script runs in a continous loop.
 
-```
-+ usbserialcaretaker.service - USB serial device caretaker daemon
-     Loaded: loaded (/etc/systemd/system/usbserialcaretaker.service; enabled; vendor preset: enabled)
-     Active: active (running) since Sun 2023-08-20 16:56:44 BST; 15min ago
-       Docs: https://github.com/andycranston/usbserialcaretaker
-   Main PID: 435 (usbserialcareta)
-      Tasks: 2 (limit: 1595)
-        CPU: 3.456s
-     CGroup: /system.slice/usbserialcaretaker.service
-             ├─ 435 /bin/bash /usr/local/bin/usbserialcaretaker
-             └─2579 sleep 5
-
-Aug 20 16:56:44 raspberrypi systemd[1]: Started USB serial device caretaker daemon.
-```
-
-Connect a USB serial dongle to one of the USB ports on the Raspberry Pi. Connect a serial port terminal emulator
-running at 115200 baud to the port on the USB serial dongle. You might need to use a null-modem cable.
-
-Verify that a login prompt to the Raspberry Pi is displayed and that you can login.
-
-
-# How it works
-
-The `usbserialcaretaker` script runs in a continous loop. On each run of the loop
-it looks for device file names:
+On each run of the loop it looks for device file names:
 
 ```
 /dev/ttyUSB0
@@ -89,7 +74,7 @@ through to:
 ```
 
 It then compares the names found on the last run of the loop with the current run. If a new device has appeared then
-the command:
+the following command is run:
 
 ```
 systemctl start serial-getty@ttyUSBX.service
@@ -111,25 +96,10 @@ So when a USB serial dongle is inserted a device file such as `ttyUSB0` is creat
 
 # Limitations
 
-If more than ten `ttyUSBX` files get created the `usbserialcaretaker` script will get confused.
+If more than ten `ttyUSBX` files get created the `usbserialcaretaker` script will very likely get confused.
 
 After a reboot any USB serial dongles may have to be temporarily disconnected for ten seconds or so and then reconnected
 to get a login prompt displayed.
-
-Sometimes the file:
-
-```
-/usr/lib/systemd/system/serial-getty@.service
-```
-
-gets reset back to its default content and the edit to the line which starts:
-
-```
-ExecStart=...
-```
-
-will need to be made again.
-
 
 ----------------
 End of README.md
