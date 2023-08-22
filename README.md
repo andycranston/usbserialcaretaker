@@ -21,9 +21,9 @@ A login prompt should be displayed.
 
 # Why is this useful?
 
-If a Raspberry Pi is being run "headless" with only connectons being
-power and networking then if the network connection fails then it will
-no longer be possible to login.
+If a Raspberry Pi is being run "headless" with the only connections being
+power and networking then if the network connection fails it will not be
+possible to login and investigate.
 
 By being able to attach a USB serial dongle and get a login prompt
 an operator will be able to diagnose the network connectivity issue.
@@ -45,13 +45,13 @@ is changed to:
 ExecStart=-/sbin/agetty 115200 %I $TERM
 ```
 
-If the usbserialcaretaker service has been installed prevoius then the service is stopped.
+If the usbserialcaretaker service has been previously installed then the service is stopped.
 
-The bash script `usbserialcaretaker.sh` is copied to `/usr/local/bin`.
+The bash script `usbserialcaretaker.sh` is copied to the `/usr/local/bin` directory.
 
-The service file `usbserialcaretaker.service` is copied to `/etc/systemd/system`.
+The service file `usbserialcaretaker.service` is copied to the `/etc/systemd/system` directory.
 
-The systemd daemon serive files are reloaded.
+The systemd daemon service files are reloaded.
 
 The usbserialcaretaker service is enabled.
 
@@ -82,8 +82,8 @@ systemctl start serial-getty@ttyUSBX.service
 
 where `ttyUSBX` is changed to the name of the device found (e.g. `ttyUSB0`).
 
-Similarly for any devices which were present in the last run but are no longer present a command
-similar to:
+Similarly for any devices which were present in the last run but are no longer present 
+in the curent run a command similar to:
 
 ```
 systemctl stop serial-getty@ttyUSBX.service
