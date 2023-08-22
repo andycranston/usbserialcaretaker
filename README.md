@@ -83,7 +83,7 @@ systemctl start serial-getty@ttyUSBX.service
 where `ttyUSBX` is changed to the name of the device found (e.g. `ttyUSB0`).
 
 Similarly for any devices which were present in the last run but are no longer present 
-in the curent run a command similar to:
+in the current run a command similar to:
 
 ```
 systemctl stop serial-getty@ttyUSBX.service
