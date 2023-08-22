@@ -74,7 +74,7 @@ chmod u=rwx,go=r         /usr/local/bin/usbserialcaretaker
 echo "Installing USB serial caretaker service in /etc/systemd/system"
 cp usbserialcaretaker.service /etc/systemd/system/usbserialcaretaker.service
 chown root:root               /etc/systemd/system/usbserialcaretaker.service
-chmod u=rx,go=r               /etc/systemd/system/usbserialcaretaker.service
+chmod u=rw,go=r               /etc/systemd/system/usbserialcaretaker.service
 
 echo "Reloading systemd daemon definitions"
 systemctl daemon-reload
